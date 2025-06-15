@@ -2,14 +2,15 @@ namespace Sensors.models
 {
     internal class Agent
     {
-        private List<string> _sensorsList { get; set; }
-        internal Agent(List<string> sensorsList)
+        private List<Sensor> _sensorsToAgant { get; set; }
+        public List<string> _sensorsList = new List<string>();
+        internal Agent(List<Sensor> senList)
         {
-            _sensorsList = sensorsList;
+            _sensorsToAgant = senList;
         }
-        internal List<string> GetSensorsList()
+        internal List<Sensor> GetSensorsList()
         {
-            return _sensorsList;
+            return _sensorsToAgant;
         }
     }
 }

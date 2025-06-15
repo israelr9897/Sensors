@@ -2,6 +2,6 @@ namespace Sensors.models
 {
     internal abstract class Sensor
     {
-        internal abstract void Active();
+        internal abstract bool Active(Agent agant);
     }
 }

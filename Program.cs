@@ -4,8 +4,7 @@
     {
         static void Main(string[] args)
         {
-            Agent a = Factory.FactoryAgent();
-            System.Console.WriteLine(a.GetSensorsList()[0]);
+            Menu.StMenu();
         }
     }
 }
