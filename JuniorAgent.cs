@@ -2,6 +2,6 @@ namespace Sensors.models
 {
     internal class JuniorAgent : Agent
     {
-        internal JuniorAgent() : base(Factory.FactoryList()){}
+        internal JuniorAgent(string name) : base(name, "JuniorAgent", Factory.FactoryList()){}
     } 
 }
