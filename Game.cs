@@ -16,19 +16,33 @@ namespace Sensors.models
             while (NumAttempts != len)
             {
                 NumAttempts = 0;
+                string choice = "";
                 for (int i = 0; i < 10; i++)
                 {
-                    System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic");
-                    string choice = Console.ReadLine();
-                    agent._PlayerSensors.Add(choice);
-                    NumAttempts += CheckSensor(agent, choice);
+                    do
+                    {
+                        System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic");
+                        choice = Console.ReadLine();
+                    } while (!CheckChoice(choice));
+                    agent._PlayerSensors.Add(FactorySensors.CreateInstans(choice));
+                    NumAttempts += CheckSensor(agent);
+                    // foreach (var item in agent._PlayerSensors)
+                    // {
+                    //     System.Console.WriteLine(item.situation);
+                    // }
+                    // foreach (var item in agent.GetSensorsList())
+                    // {
+                    //     System.Console.WriteLine(item.situation);
+                    // }
+                    Console.ForegroundColor = ConsoleColor.Green;
                     System.Console.WriteLine($"You were right - {NumAttempts}/{len}");
+                    Console.ForegroundColor = ConsoleColor.White;
                     if (NumAttempts == len)
                     {
                         break;
                     }
                     System.Console.WriteLine("\nYou were unable to pair the correct sensors,");
-                    System.Console.WriteLine($"there are -- {9 - i} -- more attempts left until the previous pairings are reset.");
+                    System.Console.WriteLine($"there are -- {9 - i} -- more attempts left until the previous pairings are reset.\n");
                 }
                 agent._PlayerSensors.Clear();
                 foreach (var sensor in agent.GetSensorsList())
@@ -37,18 +51,28 @@ namespace Sensors.models
                 }
             }
         }
-        internal static int CheckSensor(Agent agent, string type)
+        internal static int CheckSensor(Agent agent)
         {
             int total = 0;
             foreach (var sensor in agent.GetSensorsList())
             {
-                if (sensor.Active(agent, type))
+                if (sensor.Active(agent))
                 {
                     total += 1;
                     break;
                 }
             }
             return total;
+        }
+        internal static bool CheckChoice(string choice)
+        {
+            bool check = FactorySensors.OpetionsSensors.Contains(choice);
+            if (!check)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                System.Console.WriteLine("--- There is no such sensor, please insert one from the existing sensors. ---\n");
+                Console.ForegroundColor = ConsoleColor.White;
+            }return check;
         }
     }
 }

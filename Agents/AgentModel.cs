@@ -5,7 +5,8 @@ namespace Sensors.models
         internal string _Name;
         internal string _Rank;
         private List<Sensor> _SensitiveSensors { get; }
-        public List<string> _PlayerSensors = new List<string>();
+        public List<Sensor> _PlayerSensors = new List<Sensor>();
+        // public List<string> _PlayerSensors = new List<string>();
         internal Agent(string name, string rank, List<Sensor> senList)
         {
             _SensitiveSensors = senList;

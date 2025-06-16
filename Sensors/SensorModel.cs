@@ -10,6 +10,6 @@ namespace Sensors.models
         {
             Type = type;
         }
-        internal abstract bool Active(Agent agent, string type);
+        internal abstract bool Active(Agent agent);
     }
 }
