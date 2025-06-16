@@ -16,6 +16,7 @@ namespace Sensors.models
             while (NumAttempts != len)
             {
                 NumAttempts = 0;
+                int CountPulse = 0;
                 string choice = "";
                 for (int i = 0; i < 10; i++)
                 {
@@ -24,16 +25,17 @@ namespace Sensors.models
                         System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic");
                         choice = Console.ReadLine();
                     } while (!CheckChoice(choice));
+                    if (choice == "Pulse")
+                    {
+                        CountPulse += 1;
+                        if (CountPulse == 3)
+                        {
+                            NumAttempts--;
+                            CountPulse = 0;
+                        }
+                    }
                     agent._PlayerSensors.Add(FactorySensors.CreateInstans(choice));
                     NumAttempts += CheckSensor(agent);
-                    // foreach (var item in agent._PlayerSensors)
-                    // {
-                    //     System.Console.WriteLine(item.situation);
-                    // }
-                    // foreach (var item in agent.GetSensorsList())
-                    // {
-                    //     System.Console.WriteLine(item.situation);
-                    // }
                     Console.ForegroundColor = ConsoleColor.Green;
                     System.Console.WriteLine($"You were right - {NumAttempts}/{len}");
                     Console.ForegroundColor = ConsoleColor.White;

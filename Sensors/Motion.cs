@@ -9,7 +9,7 @@ namespace Sensors.models
 
             for (int i = 0; i < PlayerSensors.Count; i++)
             {
-                if ((PlayerSensors[i].Type == this.Type) && !(this.situation ))
+                if ((PlayerSensors[i].Type == this.Type) && (!this.situation) && (!PlayerSensors[i].situation))
                 {
                     PlayerSensors[i].situation = true;
                     this.situation = true;

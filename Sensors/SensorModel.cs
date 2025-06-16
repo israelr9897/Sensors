@@ -4,7 +4,7 @@ namespace Sensors.models
     {
         internal string Type;
         internal bool situation = false;
-        internal int Counter = 0;
+        // internal int Counter = 0;
 
         internal Sensor(string type)
         {

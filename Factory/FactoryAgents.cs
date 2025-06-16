@@ -11,7 +11,7 @@ namespace Sensors.models
             switch (type)
             {
                 case "Junior":
-                    return new JuniorAgent(name, FactorySensors.FactoryList(2));
+                    return new JuniorAgent(name, FactorySensors.FactoryList(4));
 
                 case "SquadLeader":
                     return new SquadLeader(name, FactorySensors.FactoryList(4));
