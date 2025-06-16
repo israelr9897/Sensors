@@ -3,25 +3,43 @@ namespace Sensors.models
     internal class Factory
     {
         private static List<string> OpetionsSensors = new List<string> { "Audio", "Thermal", "Pulse", "Motion", "Magnetic" };
-        private static List<Sensor> sen = new List<Sensor> { new S_Audio(), new S_Thermal() };
-        // private static List<Agent> Agents = new List<Agent>();
-
         internal static List<Sensor> FactoryList()
         {
-            Random random = new Random();
-            int Len = sen.Count;
-            List<Sensor> Sensors = new List<Sensor> { sen[random.Next(0,1)], sen[random.Next(1,2)] };
+            List<Sensor> Sensors = new List<Sensor> { CreateInstans(), CreateInstans() };
             foreach (var item in Sensors)
             {
                 System.Console.WriteLine(item);
             }
-            // List<Sensor> Sensors = new List<Sensor> { sen[0], sen[0] };
             return Sensors;
 
         }
-        internal static Agent FactoryAgent()
+        internal static Agent FactoryJuniorAgent(string name)
         {
-            return new JuniorAgent();
+            return new JuniorAgent(name);
+        }
+        internal static Sensor CreateInstans()
+        {
+            int Len = OpetionsSensors.Count;
+            Random random = new Random();
+            string type = OpetionsSensors[random.Next(Len)];
+            switch (type)
+            {
+                case "Audio":
+                    return new Audio();
+
+                case "Thermal":
+                    return new Thermal();
+                    
+                case "Pulse":
+                    return new Thermal();
+
+                case "Motion":
+                    return new Thermal();
+
+                case "Magnetic":
+                    return new Thermal();
+            }
+            return null;
         }
     }
 }
