@@ -4,17 +4,18 @@ namespace Sensors.models
     {
         internal string _Name;
         internal string _Rank;
-        private List<Sensor> _sensorsToAgant { get; }
-        public List<string> _sensorsList = new List<string>();
+        private List<Sensor> _SensitiveSensors { get; }
+        public List<Sensor> _PlayerSensors = new List<Sensor>();
+        // public List<string> _PlayerSensors = new List<string>();
         internal Agent(string name, string rank, List<Sensor> senList)
         {
-            _sensorsToAgant = senList;
+            _SensitiveSensors = senList;
             _Name = name;
             _Rank = rank;
         }
         internal List<Sensor> GetSensorsList()
         {
-            return _sensorsToAgant;
+            return _SensitiveSensors;
         }
         internal static void PrintDataAgent(Agent agent)
         {

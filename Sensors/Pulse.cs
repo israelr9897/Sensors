@@ -2,13 +2,21 @@ namespace Sensors.models
 {
     internal class Pulse : Sensor
     {
-        internal Pulse() : base("Pulse"){}
-        internal override bool Active(Agent agent, string type)
+        // internal static int Counter = 0;
+        internal Pulse() : base("Pulse")
         {
-            if (this.Type == type && !this.situation)
+        }
+        internal override bool Active(Agent agent)
+        {
+            List<Sensor> PlayerSensors = agent._PlayerSensors;
+            for (int i = 0; i < PlayerSensors.Count; i++)
             {
-                this.situation = true;
-                return true;
+                if ((PlayerSensors[i].Type == this.Type) && (!this.situation) && (!PlayerSensors[i].situation))
+                {
+                    agent._PlayerSensors[i].situation = true;
+                    this.situation = true;
+                    return true;
+                }
             }
             return false;
         }
