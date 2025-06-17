@@ -2,13 +2,32 @@ using System.Numerics;
 
 namespace Sensors.models
 {
-    public class Game
+    internal class Game
     {
         public static int NumAttempts = 0;
-        static internal void StGame()
+        private static Game _instansce;
+        private int CounterAttack = 0;
+        private int CounterPulse = 0;
+        internal static List<Sensor> _PlayerSensors = new List<Sensor>();
+
+
+        private Game()
+        {
+            StGame();
+        }
+        public static Game GetInstance()
+        {
+            if (_instansce == null)
+            {
+                _instansce = new Game();
+            }
+            return _instansce;
+        }
+
+        private void StGame()
         {
             Agent agent = FactoryAgents.FactoryJuniorAgent("Muhamad");
-            int len = agent.GetSensorsList().Count;
+            int len = agent.GetSensitiveSensors().Count;
             System.Console.WriteLine("\n-------- Welcome --------\n");
             Agent.PrintDataAgent(agent);
             System.Console.WriteLine("Waiting for you in the interrogation room.\n");
@@ -16,29 +35,26 @@ namespace Sensors.models
             while (NumAttempts != len)
             {
                 NumAttempts = 0;
-                int CountPulse = 0;
                 string choice = "";
                 for (int i = 0; i < 10; i++)
                 {
+                    CounterAttack++;
                     do
                     {
                         System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic");
                         choice = Console.ReadLine();
-                    } while (!CheckChoice(choice));
-                    if (choice == "Pulse")
+                    } while (!CheckChoice(choice));    
+                    _PlayerSensors.Add(FactorySensors.CreateInstans(choice));
+                    NumAttempts += ChecksIfSensorExists(agent);
+                    if (agent._Rank == "SquadLeader" && CounterAttack == 3)
                     {
-                        CountPulse += 1;
-                        if (CountPulse == 3)
-                        {
-                            NumAttempts--;
-                            CountPulse = 0;
-                        }
+                        agent.Attack();
+                        CounterAttack = 0;
                     }
-                    agent._PlayerSensors.Add(FactorySensors.CreateInstans(choice));
-                    NumAttempts += CheckSensor(agent);
                     Console.ForegroundColor = ConsoleColor.Green;
                     System.Console.WriteLine($"You were right - {NumAttempts}/{len}");
                     Console.ForegroundColor = ConsoleColor.White;
+                    System.Console.WriteLine(CounterAttack);
                     if (NumAttempts == len)
                     {
                         break;
@@ -46,29 +62,27 @@ namespace Sensors.models
                     System.Console.WriteLine("\nYou were unable to pair the correct sensors,");
                     System.Console.WriteLine($"there are -- {9 - i} -- more attempts left until the previous pairings are reset.\n");
                 }
-                agent._PlayerSensors.Clear();
-                foreach (var sensor in agent.GetSensorsList())
+                _PlayerSensors.Clear();
+                foreach (var sensor in agent.GetSensitiveSensors())
                 {
-                    sensor.situation = false;
+                    sensor.IsActive = false;
                 }
             }
         }
-        internal static int CheckSensor(Agent agent)
+        internal static int ChecksIfSensorExists (Agent agent)
         {
-            int total = 0;
-            foreach (var sensor in agent.GetSensorsList())
+            foreach (var sensor in agent.GetSensitiveSensors())
             {
-                if (sensor.Active(agent))
+                if (sensor.Active())
                 {
-                    total += 1;
-                    break;
+                    return Sensor.counter != 3? 1:Sensor.counter = 0;
                 }
             }
-            return total;
+            return 0;
         }
         internal static bool CheckChoice(string choice)
         {
-            bool check = FactorySensors.OpetionsSensors.Contains(choice);
+            bool check = FactorySensors.OpetionsSensors.Contains(choice.ToLower());
             if (!check)
             {
                 Console.ForegroundColor = ConsoleColor.Red;

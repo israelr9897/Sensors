@@ -3,7 +3,7 @@ namespace Sensors.models
     internal class FactorySensors
     {
         // internal static string[] OpetionsSensors =  {  "Pulse", "Motion" };
-        internal static string[] OpetionsSensors =  { "Audio", "Thermal", "Pulse", "Motion", "Magnetic" };
+        internal static string[] OpetionsSensors =  { "audio", "thermal", "pulse", "motion", "magnetic" };
         internal static List<Sensor> FactoryList(int num)
         {
             List<Sensor> Sensors = new List<Sensor> ();
@@ -12,7 +12,7 @@ namespace Sensors.models
                 int Len = OpetionsSensors.Length;
                 Random random = new Random();
                 string type = OpetionsSensors[random.Next(Len)];
-                Sensors.Add(CreateInstans("Pulse"));
+                Sensors.Add(CreateInstans(type));
             }
             foreach (var item in Sensors)
             {
@@ -25,19 +25,19 @@ namespace Sensors.models
         {
             switch (type)
             {
-                case "Audio":
+                case "audio":
                     return new Audio();
 
-                case "Thermal":
+                case "thermal":
                     return new Thermal();
 
-                case "Pulse":
+                case "pulse":
                     return new Pulse();
 
-                case "Motion":
+                case "motion":
                     return new Motion();
 
-                case "Magnetic":
+                case "magnetic":
                     return new Magnetic();
             }
             return null;
