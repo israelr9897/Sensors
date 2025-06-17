@@ -14,6 +14,7 @@ namespace Sensors.models
 
 
         internal static List<Sensor> PlayerSensors = new List<Sensor>();
+        internal static List<Agent> PlayerAgenets = new List<Agent>();
 
 
         private Game()
@@ -52,6 +53,33 @@ namespace Sensors.models
         private void SecondLevel()
         {
             Level = 2;
+            ReasetFilds();
+            StGame();
+            bool IsWin = false;
+            while (!IsWin)
+            {
+                if (CounterAttack == 3)
+                {
+                    IranAgent.Attack();
+                    CounterAttack = 0;
+                }
+                // foreach (var sensor in IranAgent.GetSensitiveSensors())
+                // {
+                //     System.Console.WriteLine(sensor.Type + " - " + sensor.IsActive);
+                // }
+                if (NumAttempts >= 10)
+                    {
+                        ReasetFilds();
+                    }
+                if (BasicGame())
+                {
+                    IsWin = true;
+                }
+            }
+        }
+        private void ThirdLevel()
+        {
+            Level = 3;
             ReasetFilds();
             StGame();
             bool IsWin = false;
@@ -161,20 +189,28 @@ namespace Sensors.models
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-
-
+        private void CreateIranAgent()
+        {
+            switch (Level)
+            {
+                case 1:
+                    IranAgent = FactoryAgents.FactoryJuniorAgent("Junior");
+                    NumOfSensors = IranAgent.GetSensitiveSensors().Count;
+                    break;
+                case 2:
+                    IranAgent = FactoryAgents.FactoryJuniorAgent("SquadLeader");
+                    NumOfSensors = IranAgent.GetSensitiveSensors().Count;
+                    break;
+                case 3:
+                    IranAgent = FactoryAgents.FactoryJuniorAgent("SeniorCommander");
+                    NumOfSensors = IranAgent.GetSensitiveSensors().Count;
+                    break;
+            }
+            PlayerAgenets.Add(IranAgent);
+        }
         private void StGame()
         {
-            if (Level == 1)
-            {
-                IranAgent = FactoryAgents.FactoryJuniorAgent("Junior");
-                NumOfSensors = IranAgent.GetSensitiveSensors().Count;
-            }
-            else if (Level == 2)
-            {
-                IranAgent = FactoryAgents.FactoryJuniorAgent("SquadLeader");
-                NumOfSensors = IranAgent.GetSensitiveSensors().Count;
-            }
+            CreateIranAgent();
             System.Console.WriteLine("\n-------- Welcome --------\n");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             System.Console.WriteLine($"-------- Level {Level} --------\n");
@@ -195,16 +231,28 @@ namespace Sensors.models
             }
             return total;
         }
-        private int ChecksIfSensorExists()
+        private void ChecksIfSensorExists()
         {
             foreach (var sensor in IranAgent.GetSensitiveSensors())
             {
                 if (sensor.Active())
                 {
-                    return Sensor.counter != 3 ? 1 : Sensor.counter = 0;
+                    if (Sensor.counter == 3)
+                    {
+                        Sensor.counter = 0;
+                        foreach (var senso in IranAgent.GetSensitiveSensors())
+                        {
+                            if (senso.IsActive && sensor.Type == "Pulse")
+                            {
+                                senso.IsActive = false;
+                            }
+                        }
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        System.Console.WriteLine("You guessed the sensor pulse three times.");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
                 }
             }
-            return 0;
         }
         
         private string InputAndCheckChoice()

@@ -2,7 +2,7 @@ namespace Sensors.models
 {
     internal class FactoryAgents
     {
-        private static List<string> OpetionsAgents = new List<string> { "Junior", "SquadLeader"};
+        private static List<string> OpetionsAgents = new List<string> { "Junior", "SquadLeader", "SeniorCommander"};
         private static List<string> AgentsNames = new List<string>
             {
                 "Khalid Mansour",
@@ -29,6 +29,9 @@ namespace Sensors.models
 
                 case "SquadLeader":
                     return new SquadLeader(name, FactorySensors.FactoryList(4));
+
+                case "SeniorCommander":
+                    return new SeniorCommander(name, FactorySensors.FactoryList(6));
             }
             return null;
         }
