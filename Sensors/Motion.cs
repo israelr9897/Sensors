@@ -5,7 +5,7 @@ namespace Sensors.models
         internal Motion() : base("Motion"){}
         internal override bool Active()
         {
-            foreach(var sensor in Game._PlayerSensors)
+            foreach(var sensor in Game.PlayerSensors)
             {
                 if ((sensor.Type == this.Type) && (!this.IsActive) && (!sensor.IsActive))
                 {

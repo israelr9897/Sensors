@@ -11,7 +11,7 @@ namespace Sensors.models
             if (!IsActive)
             {
                 Sensor.counter++;
-                foreach (var sensor in Game._PlayerSensors)
+                foreach (var sensor in Game.PlayerSensors)
                 {
                     if ((sensor.Type == this.Type) && (!sensor.IsActive) && counter != 3)
                     {

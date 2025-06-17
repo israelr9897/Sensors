@@ -3,15 +3,29 @@ namespace Sensors.models
     internal class FactoryAgents
     {
         private static List<string> OpetionsAgents = new List<string> { "Junior", "SquadLeader"};
-        internal static Agent FactoryJuniorAgent(string name)
+        private static List<string> AgentsNames = new List<string>
+            {
+                "Khalid Mansour",
+                "Omar Hadid",
+                "Ziad Al-Najjar",
+                "Nasser Abu Salem",
+                "Faris Rahman",
+                "Layla Nasser",
+                "Mariam Zahra",
+                "Yasmin Qabbani",
+                "Dina Al-Fahad",
+                "Rania Saeed"
+            };
+
+        internal static Agent FactoryJuniorAgent(string type)
         {
-            int Len = OpetionsAgents.Count;
+            int Len = AgentsNames.Count;
             Random random = new Random();
-            string type = OpetionsAgents[random.Next(Len)];
+            string name = AgentsNames[random.Next(Len)];
             switch (type)
             {
                 case "Junior":
-                    return new JuniorAgent(name, FactorySensors.FactoryList(4));
+                    return new JuniorAgent(name, FactorySensors.FactoryList(2));
 
                 case "SquadLeader":
                     return new SquadLeader(name, FactorySensors.FactoryList(4));
