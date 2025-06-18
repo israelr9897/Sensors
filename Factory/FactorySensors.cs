@@ -2,8 +2,7 @@ namespace Sensors.models
 {
     internal class FactorySensors
     {
-        // internal static string[] OpetionsSensors =  {  "Pulse", "Motion" };
-        internal static string[] OpetionsSensors =  { "audio", "thermal", "pulse", "motion", "magnetic" };
+        internal static string[] OpetionsSensors =  { "audio", "thermal", "pulse", "motion", "magnetic", "signal", "light" };
         internal static List<Sensor> FactoryList(int num)
         {
             List<Sensor> Sensors = new List<Sensor> ();
@@ -39,6 +38,11 @@ namespace Sensors.models
 
                 case "magnetic":
                     return new Magnetic();
+
+                case "signal":
+                    return new Signal();
+                case "light":
+                    return new Light();
             }
             return null;
         }

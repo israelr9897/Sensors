@@ -2,26 +2,23 @@ namespace Sensors.models
 {
     internal class Agent
     {
-        internal string _Name;
-        internal string _Rank;
+        internal string Name;
+        private string _Rank{ get; }
         private List<Sensor> _SensitiveSensors { get; }
-        // public List<string> _PlayerSensors = new List<string>();
         internal Agent(string name, string rank, List<Sensor> senList)
         {
             _SensitiveSensors = senList;
-            _Name = name;
+            Name = name;
             _Rank = rank;
         }
         internal List<Sensor> GetSensitiveSensors()
         {
             return _SensitiveSensors;
         }
-        internal virtual void Attack(){}
-
-        internal static void PrintDataAgent(Agent agent)
+        internal string GetRankForAgent()
         {
-            System.Console.WriteLine($"Name: {agent._Name}");
-            System.Console.WriteLine($"Rank: {agent._Rank}");
+            return _Rank;
         }
+        internal virtual void Attack() { }
     }
 }

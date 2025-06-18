@@ -1,8 +1,8 @@
 namespace Sensors.models
 {
-    internal class Audio : Sensor
+    internal class Signal : Sensor
     {
-        internal Audio() : base("Audio"){}
+        internal Signal() : base("Signal") { }
         internal override bool Active()
         {
             if (!IsActive)
@@ -13,12 +13,18 @@ namespace Sensors.models
                     {
                         sensor.IsActive = true;
                         this.IsActive = true;
+                        RevealsLevel();
                         return true;
                     }
                 }
             }
             return false;
-        
+        }
+        private void RevealsLevel()
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            System.Console.WriteLine($"\nThe level of the Iranian agent playing against you is -- {Game.IranAgent.GetRankForAgent()} --\n");
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }

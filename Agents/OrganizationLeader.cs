@@ -1,12 +1,12 @@
 namespace Sensors.models
 {
-    internal class SquadLeader : Agent
+    internal class OrganizationLeader : Agent
     {
-        internal SquadLeader(string name, List<Sensor> sensorsList) : base(name, "SquadLeader", sensorsList) { }
+        internal OrganizationLeader(string name, List<Sensor> sensorsList) : base(name, "OrganizationLeader", sensorsList) { }
 
         internal override void Attack()
         {
-            if (Game.CounterAttack == 5)
+            if (Game.CounterAttack == 4)
             {
                 foreach (var sensor in GetSensitiveSensors())
                 {
@@ -17,7 +17,6 @@ namespace Sensors.models
                         System.Console.WriteLine("\n⚠️⚠️ An attack is being carried out against ⚠️⚠️\n");
                         Console.ForegroundColor = ConsoleColor.White;
                         Game.CounterAttack = 0;
-                        break;
                     }
                 }
             }
