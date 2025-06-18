@@ -35,7 +35,7 @@ namespace Sensors.models
              Player player = new Player(
                 reader.GetString("name"),
                 reader.GetString("Code_player"),
-                reader.GetInt32("level")
+                reader.GetInt32("last_level")
             );
             return player;
         }
@@ -64,10 +64,10 @@ namespace Sensors.models
             try
             {
                 MySqlConnection conn = _MySql.GetConnect();
-                var cmd = new MySqlCommand($"SELECT level FROM players WHERE code_player = '{CP}';", conn);
+                var cmd = new MySqlCommand($"SELECT last_level FROM players WHERE code_player = '{CP}';", conn);
                 var reader = cmd.ExecuteReader();
                 reader.Read();
-                return reader.GetInt32("level");
+                return reader.GetInt32("last_level");
             }
             catch (MySqlException ex)
             {

@@ -2,7 +2,7 @@ namespace Sensors.models
 {
     internal class SeniorCommander : Agent
     {
-        internal SeniorCommander(string name, List<Sensor> sensorsList) : base(name, "SeniorCommander", sensorsList) { }
+        internal SeniorCommander(int id, string name, List<Sensor> sensorsList) : base(id, name, "SeniorCommander", sensorsList) { }
 
         internal override void Attack()
         {

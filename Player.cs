@@ -4,7 +4,7 @@ namespace Sensors.models
     {
         internal string Name;
         internal string CodePlayer;
-        internal int Level = 1;
+        internal int Level;
         public List<Sensor> PlayerSensors = new List<Sensor>();
         internal Player(string name, string codePlayer, int level)
         {

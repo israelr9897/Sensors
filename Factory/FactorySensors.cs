@@ -22,7 +22,7 @@ namespace Sensors.models
         }
         internal static Sensor CreateInstans(string type)
         {
-            switch (type)
+            switch (type.ToLower())
             {
                 case "audio":
                     return new Audio();

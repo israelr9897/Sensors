@@ -23,6 +23,7 @@ namespace Sensors.models
             MySqlConnect conn = new MySqlConnect();
             conn.connect();
             new DalPeople(conn);
+            new DalAgents(conn);
             CheckAndInputNewPlayer();
             StartGame();     
             GameManager();
@@ -143,6 +144,7 @@ namespace Sensors.models
                     NumOfSensors = IranAgent.GetSensitiveSensors().Count;
                     break;
             }
+            // DalAgents.UpdateAgents(IranAgent);
             AgenetsToGame.Add(IranAgent);
         }
 

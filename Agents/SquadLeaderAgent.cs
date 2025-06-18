@@ -2,7 +2,7 @@ namespace Sensors.models
 {
     internal class SquadLeader : Agent
     {
-        internal SquadLeader(string name, List<Sensor> sensorsList) : base(name, "SquadLeader", sensorsList) { }
+        internal SquadLeader(int id, string name, List<Sensor> sensorsList) : base(id, name, "SquadLeader", sensorsList) { }
 
         internal override void Attack()
         {

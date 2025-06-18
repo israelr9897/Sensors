@@ -2,7 +2,7 @@ namespace Sensors.models
 {
     internal class OrganizationLeader : Agent
     {
-        internal OrganizationLeader(string name, List<Sensor> sensorsList) : base(name, "OrganizationLeader", sensorsList) { }
+        internal OrganizationLeader(int id, string name, List<Sensor> sensorsList) : base(id, name, "OrganizationLeader", sensorsList) { }
 
         internal override void Attack()
         {
