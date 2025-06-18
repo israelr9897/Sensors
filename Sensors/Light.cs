@@ -1,8 +1,8 @@
 namespace Sensors.models
 {
-    internal class Thermal : Sensor
+    internal class Light : Sensor
     {
-        internal Thermal() : base("Thermal") { }
+        internal Light() : base("Light") { }
         internal override bool Active()
         {
             if (!IsActive)
@@ -13,22 +13,24 @@ namespace Sensors.models
                     {
                         sensor.IsActive = true;
                         this.IsActive = true;
-                        OneSensorDetects();
+                        RevealsLevelAndOneSensor();
                         return true;
                     }
                 }
             }
             return false;
         }
-        private void OneSensorDetects()
+        private void RevealsLevelAndOneSensor()
         {
-            foreach (var sensor in Game.PlayerSensors)
+            Console.ForegroundColor = ConsoleColor.Blue;
+            System.Console.WriteLine($"\nThe level of the Iranian agent playing against you is -- {Game.IranAgent.GetRankForAgent()} --\n");
+            foreach (var sensor in Game.IranAgent.GetSensitiveSensors())
             {
                 if (!sensor.IsActive)
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    System.Console.WriteLine($"A sensor that the Iranian agent is weak to --- {sensor.Type} ---");
+                    System.Console.WriteLine($"And a sensor that the agent is sensitive to is -- {sensor.Type} --\n");
                     Console.ForegroundColor = ConsoleColor.White;
+                    break;
                 }
             }
         }

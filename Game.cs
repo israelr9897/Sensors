@@ -8,18 +8,21 @@ namespace Sensors.models
         private static int NumOfSensors;
         private static int NumAttempts = 0;
         private int CounterToStepes = 0;
-        private int CounterAttack = 0;
-        private int Level = 1;
-        private Agent IranAgent;
+        internal static int CounterAttack = 0;
+        internal static Agent IranAgent;
+        internal static Player player;
+        private int Level;
 
 
         internal static List<Sensor> PlayerSensors = new List<Sensor>();
-        internal static List<Agent> PlayerAgenets = new List<Agent>();
+        internal static List<Agent> AgenetsToGame = new List<Agent>();
 
 
         private Game()
         {
-            StGame();
+            CheckAndInputNewPlayer();
+            StartGame();     
+            GameManager();
         }
         public static Game GetInstance()
         {
@@ -29,69 +32,62 @@ namespace Sensors.models
             }
             return _instansce;
         }
-        private void StGame()
+        private void CheckAndInputNewPlayer()
         {
-            bool IsExit = false;
-            while (!IsExit)
-            {
-                CreateIranAgent();
-                System.Console.WriteLine("\n-------- Welcome --------\n");
-                Console.ForegroundColor = ConsoleColor.DarkBlue;
-                System.Console.WriteLine($"-------- Level {Level} --------\n");
-                Console.ForegroundColor = ConsoleColor.White;
-                Agent.PrintDataAgent(IranAgent);
-                System.Console.WriteLine("Waiting for you in the interrogation room.\n");
-                ReasetFilds();
-                CounterToStepes = 0;
-                ManagerGame();
-            }
+            System.Console.WriteLine("What your name? ");
+            string name = Console.ReadLine();
+            player = new Player(name, 4);
+            Level = player.Level;
         }
-        private bool BasicGame()
+        private void StartGame()
         {
-            CounterAttack++;
-            CounterToStepes++;
-            string choice = InputAndCheckChoice();
-            PlayerSensors.Add(FactorySensors.CreateInstans(choice));
-            ChecksIfSensorExists();
-            NumAttempts = SumAllSensorIsExists();
-            Console.ForegroundColor = ConsoleColor.Green;
-            System.Console.WriteLine($"You were right - {NumAttempts}/{NumOfSensors}");
+            CreateIranAgent();
+            ReasetFilds();
+            System.Console.WriteLine("\n-------- Welcome --------\n");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            System.Console.WriteLine($"-------- Level {Level} --------\n");
             Console.ForegroundColor = ConsoleColor.White;
-            if (NumAttempts == NumOfSensors)
-            {
-                return true;
-            }
-            System.Console.WriteLine("\nYou were unable to pair the correct sensors, please try again.");
-            return false;
+            System.Console.WriteLine($"Name: {IranAgent.Name}");
+            System.Console.WriteLine("Waiting for you in the interrogation room.\n");
+            CounterToStepes = 0;
         }
-
-        private void ManagerGame()
+        private void GameManager()
         {
+            System.Console.WriteLine(NumOfSensors);
             while (true)
             {
-                bool IsWin = BasicGame();
-                if (IsWin)
+                CounterAttack++;
+                CounterToStepes++;
+                string choice = InputAndCheckChoice();
+                PlayerSensors.Add(FactorySensors.CreateInstans(choice));
+                ChecksIfSensorExists();
+                NumAttempts = SumAllSensorIsExists();
+                Console.ForegroundColor = ConsoleColor.Green;
+                System.Console.WriteLine($"You were right - {NumAttempts}/{NumOfSensors}");
+                Console.ForegroundColor = ConsoleColor.White;
+                IranAgent.Attack();
+                System.Console.WriteLine(SumAllSensorIsExists()+ "  total");
+                if (SumAllSensorIsExists() == NumOfSensors)
                 {
                     PrintWin();
-                    break;
+                    Level++;
+                    if (Level == 5)
+                    {
+                        break;
+                    }
+                    StartGame();
                 }
-                if (CounterToStepes % 10 == 0)
+                else
                 {
-                    PrintTenTries();
-                    ReasetFilds();
-                }
-                if (CounterAttack == 3)
-                {
-                    IranAgent.Attack();
-                    CounterAttack = 0;
+                    System.Console.WriteLine("\nYou were unable to pair the correct sensors, please try again.");
+                    IsTenTries();
                 }
             }
-            Level++;
         }
         private void ReasetFilds()
         {
             NumAttempts = 0;
-            // CounterToStepes = 0;
+            Pulse.Counter = 0;
             CounterAttack = 0;
             PlayerSensors.Clear();
             foreach (var sensor in IranAgent.GetSensitiveSensors())
@@ -107,11 +103,15 @@ namespace Sensors.models
             System.Console.WriteLine("\nYou won!!! You managed to find all the correct sensors\n");
             Console.ForegroundColor = ConsoleColor.White;
         }
-        private static void PrintTenTries()
+        private void IsTenTries()
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            System.Console.WriteLine("\nYou won!!! You managed to find all the correct sensors\n");
-            Console.ForegroundColor = ConsoleColor.White;
+            if (CounterToStepes % 10 == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                System.Console.WriteLine("\nIt's been 10 tries !!! you'll have to start all over again.\n");
+                Console.ForegroundColor = ConsoleColor.White;
+                ReasetFilds();
+            }
         }
 
         private void CreateIranAgent()
@@ -130,8 +130,12 @@ namespace Sensors.models
                     IranAgent = FactoryAgents.FactoryJuniorAgent("SeniorCommander");
                     NumOfSensors = IranAgent.GetSensitiveSensors().Count;
                     break;
+                case 4:
+                    IranAgent = FactoryAgents.FactoryJuniorAgent("OrganizationLeader");
+                    NumOfSensors = IranAgent.GetSensitiveSensors().Count;
+                    break;
             }
-            PlayerAgenets.Add(IranAgent);
+            AgenetsToGame.Add(IranAgent);
         }
 
         private int SumAllSensorIsExists()
@@ -152,27 +156,14 @@ namespace Sensors.models
             {
                 if (sensor.Active())
                 {
-                    if (Sensor.counter == 3)
-                    {
-                        Sensor.counter = 0;
-                        foreach (var senso in IranAgent.GetSensitiveSensors())
-                        {
-                            if (senso.IsActive && sensor.Type == "Pulse")
-                            {
-                                senso.IsActive = false;
-                            }
-                        }
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        System.Console.WriteLine("You guessed the sensor pulse three times.");
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
+                    break;
                 }
             }
         }
         
         private string InputAndCheckChoice()
         {
-            System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic");
+            System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic / Signal / Light");
             string choice = Console.ReadLine().ToLower();
             bool check = FactorySensors.OpetionsSensors.Contains(choice);
             while (!check)
@@ -180,9 +171,9 @@ namespace Sensors.models
                 Console.ForegroundColor = ConsoleColor.Red;
                 System.Console.WriteLine("--- There is no such sensor, please insert one from the existing sensors. ---\n");
                 Console.ForegroundColor = ConsoleColor.White;
-                System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic");
-                choice = Console.ReadLine();
-                check = FactorySensors.OpetionsSensors.Contains(choice.ToLower());
+                System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic / Signal / Light");
+                choice = Console.ReadLine().ToLower();
+                check = FactorySensors.OpetionsSensors.Contains(choice);
             }
             return choice;
         }
