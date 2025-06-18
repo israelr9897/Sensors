@@ -20,6 +20,9 @@ namespace Sensors.models
 
         private Game()
         {
+            MySqlConnect conn = new MySqlConnect();
+            conn.connect();
+            new DalPeople(conn);
             CheckAndInputNewPlayer();
             StartGame();     
             GameManager();
@@ -34,9 +37,15 @@ namespace Sensors.models
         }
         private void CheckAndInputNewPlayer()
         {
-            System.Console.WriteLine("What your name? ");
-            string name = Console.ReadLine();
-            player = new Player(name, 4);
+            System.Console.WriteLine("What your  - code player - ? ");
+            string codePlayer = Console.ReadLine();
+            if (!DalPeople.ChecksIfPlayerExistsByCodePlayer(codePlayer))
+            {
+                System.Console.WriteLine("What your  - name - ? ");
+                string name = Console.ReadLine();
+                DalPeople.AddPlayer(name, DalPeople.CreatCodePlayer(name));
+            }
+            player = DalPeople.FindPlayerByCP(codePlayer);
             Level = player.Level;
         }
         private void StartGame()
@@ -53,7 +62,6 @@ namespace Sensors.models
         }
         private void GameManager()
         {
-            System.Console.WriteLine(NumOfSensors);
             while (true)
             {
                 CounterAttack++;
