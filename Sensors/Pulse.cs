@@ -6,19 +6,22 @@ namespace Sensors.models
         internal Pulse() : base("Pulse")
         {
         }
-        internal override bool Active(Agent agent)
+        internal override bool Active()
         {
-            List<Sensor> PlayerSensors = agent._PlayerSensors;
-            for (int i = 0; i < PlayerSensors.Count; i++)
+            if (!IsActive)
             {
-                if ((PlayerSensors[i].Type == this.Type) && (!this.situation) && (!PlayerSensors[i].situation))
+                Sensor.counter++;
+                foreach (var sensor in Game.PlayerSensors)
                 {
-                    agent._PlayerSensors[i].situation = true;
-                    this.situation = true;
-                    return true;
+                    if ((sensor.Type == this.Type) && (!sensor.IsActive) && counter != 3)
+                    {
+                        sensor.IsActive = true;
+                        this.IsActive = true;
+                        return true;
+                    }
                 }
             }
-            return false;
+            return counter != 3? false:true;
         }
     }
 }

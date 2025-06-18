@@ -3,16 +3,14 @@ namespace Sensors.models
     internal class Motion : Sensor
     {
         internal Motion() : base("Motion"){}
-        internal override bool Active(Agent agent)
+        internal override bool Active()
         {
-            List<Sensor> PlayerSensors = agent._PlayerSensors;
-
-            for (int i = 0; i < PlayerSensors.Count; i++)
+            foreach(var sensor in Game.PlayerSensors)
             {
-                if ((PlayerSensors[i].Type == this.Type) && (!this.situation) && (!PlayerSensors[i].situation))
+                if ((sensor.Type == this.Type) && (!this.IsActive) && (!sensor.IsActive))
                 {
-                    PlayerSensors[i].situation = true;
-                    this.situation = true;
+                    sensor.IsActive = true;
+                    this.IsActive = true;
                     return true;
                 }
             }
