@@ -19,7 +19,7 @@ namespace Sensors.models
 
         private Game()
         {
-            FirstLevel();
+            StGame();
         }
         public static Game GetInstance()
         {
@@ -29,145 +29,30 @@ namespace Sensors.models
             }
             return _instansce;
         }
-
-        private void FirstLevel()
+        private void StGame()
         {
-            StGame();
-            bool IsWin = false;
-            while (!IsWin)
+            bool IsExit = false;
+            while (!IsExit)
             {
-                if (CounterToStepes >= 10)
-                {
-                    ReasetFilds();
-                }
-                if (BasicGame())
-                {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    System.Console.WriteLine("\nYou won!!! You managed to find all the correct sensors\n");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    IsWin = true;
-                }
-            }
-            SecondLevel();
-        }
-        private void SecondLevel()
-        {
-            Level = 2;
-            ReasetFilds();
-            StGame();
-            bool IsWin = false;
-            while (!IsWin)
-            {
-                if (CounterAttack == 3)
-                {
-                    IranAgent.Attack();
-                    CounterAttack = 0;
-                }
-                // foreach (var sensor in IranAgent.GetSensitiveSensors())
-                // {
-                //     System.Console.WriteLine(sensor.Type + " - " + sensor.IsActive);
-                // }
-                if (NumAttempts >= 10)
-                    {
-                        ReasetFilds();
-                    }
-                if (BasicGame())
-                {
-                    IsWin = true;
-                }
+                CreateIranAgent();
+                System.Console.WriteLine("\n-------- Welcome --------\n");
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                System.Console.WriteLine($"-------- Level {Level} --------\n");
+                Console.ForegroundColor = ConsoleColor.White;
+                Agent.PrintDataAgent(IranAgent);
+                System.Console.WriteLine("Waiting for you in the interrogation room.\n");
+                ReasetFilds();
+                CounterToStepes = 0;
+                ManagerGame();
             }
         }
-        private void ThirdLevel()
-        {
-            Level = 3;
-            ReasetFilds();
-            StGame();
-            bool IsWin = false;
-            while (!IsWin)
-            {
-                if (CounterAttack == 3)
-                {
-                    IranAgent.Attack();
-                    CounterAttack = 0;
-                }
-                // foreach (var sensor in IranAgent.GetSensitiveSensors())
-                // {
-                //     System.Console.WriteLine(sensor.Type + " - " + sensor.IsActive);
-                // }
-                if (NumAttempts >= 10)
-                    {
-                        ReasetFilds();
-                    }
-                if (BasicGame())
-                {
-                    IsWin = true;
-                }
-            }
-        }
-
-                // while (NumAttempts != NumOfSensors && !IsContinue)
-                // {
-                //     NumAttempts = 0;
-                //     for (int i = 0; i < 10; i++)
-                //     {
-                //         CounterAttack++;
-                //         string choice = InputAndCheckChoice();
-                //         PlayerSensors.Add(FactorySensors.CreateInstans(choice));
-                //         NumAttempts += ChecksIfSensorExists(agent);
-                //         // if (agent._Rank == "SquadLeader" && CounterAttack == 3)
-                //         // {
-                //         //     agent.Attack();
-                //         //     CounterAttack = 0;
-                //         // }
-                //         Console.ForegroundColor = ConsoleColor.Green;
-                //         System.Console.WriteLine($"You were right - {NumAttempts}/{NumOfSensors}");
-                //         Console.ForegroundColor = ConsoleColor.White;
-                //         System.Console.WriteLine(CounterAttack);
-                //         if (NumAttempts == NumOfSensors)
-                //         {
-                //             IsContinue = CheckIsContinue();
-                //             break;
-                //         }
-                //         System.Console.WriteLine("\nYou were unable to pair the correct sensors,");
-                //         System.Console.WriteLine($"there are -- {9 - i} -- more attempts left until the previous pairings are reset.\n");
-                //     }
-                //     PlayerSensors.Clear();
-                //     foreach (var sensor in agent.GetSensitiveSensors())
-                //     {
-                //         sensor.IsActive = false;
-                //     }
-                // }
-
-
-        private void ReasetFilds()
-        {
-            NumAttempts = 0;
-            CounterToStepes = 0;
-            CounterAttack = 0;
-            PlayerSensors.Clear();
-            foreach (var sensor in IranAgent.GetSensitiveSensors())
-            {
-                sensor.IsActive = false;
-            }
-        }
-
         private bool BasicGame()
         {
-            // while (NumAttempts != NumOfSensors)
-            // {
-            //     NumAttempts = 0;
-            //     for (int i = 0; i < 10; i++)
-            //     {
             CounterAttack++;
             CounterToStepes++;
             string choice = InputAndCheckChoice();
             PlayerSensors.Add(FactorySensors.CreateInstans(choice));
             ChecksIfSensorExists();
-            // if (agent._Rank == "SquadLeader" && CounterAttack == 3)
-            // {
-            //     agent.Attack();
-            //     CounterAttack = 0;
-            // }
             NumAttempts = SumAllSensorIsExists();
             Console.ForegroundColor = ConsoleColor.Green;
             System.Console.WriteLine($"You were right - {NumAttempts}/{NumOfSensors}");
@@ -176,13 +61,53 @@ namespace Sensors.models
             {
                 return true;
             }
-            System.Console.WriteLine("\nYou were unable to pair the correct sensors,");
-            System.Console.WriteLine($"there are -- {10 - CounterToStepes} -- more attempts left until the previous pairings are reset.\n");
+            System.Console.WriteLine("\nYou were unable to pair the correct sensors, please try again.");
             return false;
         }
 
+        private void ManagerGame()
+        {
+            while (true)
+            {
+                bool IsWin = BasicGame();
+                if (IsWin)
+                {
+                    PrintWin();
+                    break;
+                }
+                if (CounterToStepes % 10 == 0)
+                {
+                    PrintTenTries();
+                    ReasetFilds();
+                }
+                if (CounterAttack == 3)
+                {
+                    IranAgent.Attack();
+                    CounterAttack = 0;
+                }
+            }
+            Level++;
+        }
+        private void ReasetFilds()
+        {
+            NumAttempts = 0;
+            // CounterToStepes = 0;
+            CounterAttack = 0;
+            PlayerSensors.Clear();
+            foreach (var sensor in IranAgent.GetSensitiveSensors())
+            {
+                sensor.IsActive = false;
+            }
+        }
 
-        private static void Prin()
+
+        private static void PrintWin()
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            System.Console.WriteLine("\nYou won!!! You managed to find all the correct sensors\n");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+        private static void PrintTenTries()
         {
             Console.ForegroundColor = ConsoleColor.Blue;
             System.Console.WriteLine("\nYou won!!! You managed to find all the correct sensors\n");
@@ -207,16 +132,6 @@ namespace Sensors.models
                     break;
             }
             PlayerAgenets.Add(IranAgent);
-        }
-        private void StGame()
-        {
-            CreateIranAgent();
-            System.Console.WriteLine("\n-------- Welcome --------\n");
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            System.Console.WriteLine($"-------- Level {Level} --------\n");
-            Console.ForegroundColor = ConsoleColor.White;
-            Agent.PrintDataAgent(IranAgent);
-            System.Console.WriteLine("Waiting for you in the interrogation room.\n");
         }
 
         private int SumAllSensorIsExists()
