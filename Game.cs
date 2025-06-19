@@ -7,22 +7,25 @@ namespace Sensors.models
         private static Game _instansce;
         private static int NumOfSensors;
         private static int NumAttempts = 0;
-        private int CounterToStepes = 0;
+        internal static int CounterToStepes = 0;
         internal static int CounterAttack = 0;
         internal static Agent IranAgent;
         internal static Player player;
-        private int Level;
+        // private int Level = 1;
 
-
-        internal static List<Sensor> PlayerSensors = new List<Sensor>();
+        // internal static List<Sensor> PlayerSensors = new List<Sensor>();
+        internal static Dictionary<string, List<bool>> PlayerSensors = new Dictionary<string, List<bool>>();
         internal static List<Agent> AgenetsToGame = new List<Agent>();
 
 
         private Game()
         {
-            CheckAndInputNewPlayer();
-            StartGame();     
+            MySqlConnect conn = new MySqlConnect();
+            conn.connect();
+            new DalPlayer(conn);
+            new DalAgents(conn);
             GameManager();
+
         }
         public static Game GetInstance()
         {
@@ -34,45 +37,67 @@ namespace Sensors.models
         }
         private void CheckAndInputNewPlayer()
         {
-            System.Console.WriteLine("What your name? ");
-            string name = Console.ReadLine();
-            player = new Player(name, 4);
-            Level = player.Level;
+            System.Console.WriteLine("What your  - code player - ? ");
+            string codePlayer = Console.ReadLine();
+            if (!DalPlayer.ChecksIfPlayerExistsByCodePlayer(codePlayer))
+            {
+                System.Console.WriteLine("What your  - name - ? ");
+                string name = Console.ReadLine();
+                codePlayer = Functions.CreatCodePlayer(name);
+                DalPlayer.AddPlayer(name, codePlayer);
+            }
+            player = DalPlayer.FindPlayerByCP(codePlayer);
         }
         private void StartGame()
         {
             CreateIranAgent();
+            DalAgents.UpdateAgents(IranAgent);
             ReasetFilds();
             System.Console.WriteLine("\n-------- Welcome --------\n");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            System.Console.WriteLine($"-------- Level {Level} --------\n");
+            System.Console.WriteLine($"-------- Level {player.Level} --------\n");
             Console.ForegroundColor = ConsoleColor.White;
             System.Console.WriteLine($"Name: {IranAgent.Name}");
             System.Console.WriteLine("Waiting for you in the interrogation room.\n");
             CounterToStepes = 0;
         }
+        private void AddDictOfPlayer(string key)
+        {
+            if (!PlayerSensors.ContainsKey(key))
+            {
+                PlayerSensors[key] = new List<bool> { false };
+            }
+            else
+            {
+                PlayerSensors[key].Add(false);
+            }
+        }
         private void GameManager()
         {
-            System.Console.WriteLine(NumOfSensors);
+            CheckAndInputNewPlayer();
+            StartGame();     
             while (true)
             {
                 CounterAttack++;
                 CounterToStepes++;
                 string choice = InputAndCheckChoice();
-                PlayerSensors.Add(FactorySensors.CreateInstans(choice));
+                AddDictOfPlayer(choice);
+                // PlayerSensors.Add(FactorySensors.CreateInstans(choice));
                 ChecksIfSensorExists();
                 NumAttempts = SumAllSensorIsExists();
                 Console.ForegroundColor = ConsoleColor.Green;
                 System.Console.WriteLine($"You were right - {NumAttempts}/{NumOfSensors}");
                 Console.ForegroundColor = ConsoleColor.White;
                 IranAgent.Attack();
-                System.Console.WriteLine(SumAllSensorIsExists()+ "  total");
                 if (SumAllSensorIsExists() == NumOfSensors)
                 {
                     PrintWin();
-                    Level++;
-                    if (Level == 5)
+                    DalPlayer.UpdatDataGameToPlayer(player, IranAgent.ID, CounterAttack);
+                    player.Level++;
+                    if (player.Level == 5)
                     {
+                        player.Level = 4;
+                        DalPlayer.UpdatePlayer(player);
                         break;
                     }
                     StartGame();
@@ -116,7 +141,7 @@ namespace Sensors.models
 
         private void CreateIranAgent()
         {
-            switch (Level)
+            switch (player.Level)
             {
                 case 1:
                     IranAgent = FactoryAgents.FactoryJuniorAgent("Junior");
@@ -135,6 +160,7 @@ namespace Sensors.models
                     NumOfSensors = IranAgent.GetSensitiveSensors().Count;
                     break;
             }
+            // DalAgents.UpdateAgents(IranAgent);
             AgenetsToGame.Add(IranAgent);
         }
 

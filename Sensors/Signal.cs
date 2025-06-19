@@ -9,18 +9,25 @@ namespace Sensors.models
             {
                 foreach (var sensor in Game.PlayerSensors)
                 {
-                    if ((sensor.Type == this.Type) && (!sensor.IsActive))
+                    if (sensor.Key == this.Type.ToLower())
                     {
-                        sensor.IsActive = true;
-                        this.IsActive = true;
-                        RevealsLevel();
-                        return true;
+                        for (int i = 0; i < sensor.Value.Count; i++)
+                        {
+                            if (!sensor.Value[i])
+                            {
+                                sensor.Value[i] = true;
+                                this.IsActive = true;
+                                this.IsActive = true;
+                                RevealsRank();
+                                return true;
+                            }
+                        }
                     }
                 }
             }
             return false;
         }
-        private void RevealsLevel()
+        private void RevealsRank()
         {
             Console.ForegroundColor = ConsoleColor.Blue;
             System.Console.WriteLine($"\nThe level of the Iranian agent playing against you is -- {Game.IranAgent.GetRankForAgent()} --\n");

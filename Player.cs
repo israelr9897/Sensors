@@ -2,12 +2,23 @@ namespace Sensors.models
 {
     internal class Player
     {
+        internal int ID;
+        internal int NumGame;
         internal string Name;
-        internal int Level = 0;
-        public List<Sensor> PlayerSensors = new List<Sensor>();
-        internal Player(string name, int level)
+        internal string CodePlayer;
+        internal int Level;
+        internal Player(string name, string codePlayer, int level, int id, int numGame)
         {
             Name = name;
+            CodePlayer = codePlayer;
+            Level = level;
+            ID = id;
+            NumGame = numGame;
+        }
+        internal Player(string name, string codePlayer, int level)
+        {
+            Name = name;
+            CodePlayer = codePlayer;
             Level = level;
         }
     }

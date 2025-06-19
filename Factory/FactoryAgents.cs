@@ -18,22 +18,25 @@ namespace Sensors.models
 
         internal static Agent FactoryJuniorAgent(string type)
         {
-            int Len = AgentsNames.Count;
-            Random random = new Random();
-            string name = AgentsNames[random.Next(Len)];
+            // int Len = AgentsNames.Count;
+            // Random random = new Random();
+            // string name = AgentsNames[random.Next(Len)];
+            string idAndName = DalAgents.ReturnRandomAgent();
+            int id = int.Parse(idAndName.Split(",")[0]); 
+            string name = idAndName.Split(",")[1];
             switch (type)
             {
                 case "Junior":
-                    return new JuniorAgent(name, FactorySensors.FactoryList(2));
+                    return new JuniorAgent(id, name, FactorySensors.FactoryList(2));
 
                 case "SquadLeader":
-                    return new SquadLeader(name, FactorySensors.FactoryList(4));
+                    return new SquadLeader(id, name, FactorySensors.FactoryList(4));
 
                 case "SeniorCommander":
-                    return new SeniorCommander(name, FactorySensors.FactoryList(6));
+                    return new SeniorCommander(id, name, FactorySensors.FactoryList(6));
 
                 case "OrganizationLeader":
-                    return new SeniorCommander(name, FactorySensors.FactoryList(8));
+                    return new OrganizationLeader(id, name, FactorySensors.FactoryList(8));
             }
             return null;
         }
