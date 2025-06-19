@@ -11,10 +11,10 @@ namespace Sensors.models
         internal static int CounterAttack = 0;
         internal static Agent IranAgent;
         internal static Player player;
-        private int Level;
+        private int Level = 1;
 
-
-        internal static List<Sensor> PlayerSensors = new List<Sensor>();
+        // internal static List<Sensor> PlayerSensors = new List<Sensor>();
+        internal static Dictionary<string, List<bool>> PlayerSensors = new Dictionary<string, List<bool>>();
         internal static List<Agent> AgenetsToGame = new List<Agent>();
 
 
@@ -22,9 +22,9 @@ namespace Sensors.models
         {
             MySqlConnect conn = new MySqlConnect();
             conn.connect();
-            new DalPeople(conn);
+            new DalPlayer(conn);
             new DalAgents(conn);
-            CheckAndInputNewPlayer();
+            // CheckAndInputNewPlayer();
             StartGame();     
             GameManager();
         }
@@ -40,13 +40,13 @@ namespace Sensors.models
         {
             System.Console.WriteLine("What your  - code player - ? ");
             string codePlayer = Console.ReadLine();
-            if (!DalPeople.ChecksIfPlayerExistsByCodePlayer(codePlayer))
+            if (!DalPlayer.ChecksIfPlayerExistsByCodePlayer(codePlayer))
             {
                 System.Console.WriteLine("What your  - name - ? ");
                 string name = Console.ReadLine();
-                DalPeople.AddPlayer(name, DalPeople.CreatCodePlayer(name));
+                DalPlayer.AddPlayer(name, Functions.CreatCodePlayer(name));
             }
-            player = DalPeople.FindPlayerByCP(codePlayer);
+            player = DalPlayer.FindPlayerByCP(codePlayer);
             Level = player.Level;
         }
         private void StartGame()
@@ -61,6 +61,17 @@ namespace Sensors.models
             System.Console.WriteLine("Waiting for you in the interrogation room.\n");
             CounterToStepes = 0;
         }
+        private void AddDictOfPlayer(string key)
+        {
+            if (!PlayerSensors.ContainsKey(key))
+            {
+                PlayerSensors[key] = new List<bool> { false };
+            }
+            else
+            {
+                PlayerSensors[key].Add(false);
+            }
+        }
         private void GameManager()
         {
             while (true)
@@ -68,14 +79,15 @@ namespace Sensors.models
                 CounterAttack++;
                 CounterToStepes++;
                 string choice = InputAndCheckChoice();
-                PlayerSensors.Add(FactorySensors.CreateInstans(choice));
+                AddDictOfPlayer(choice);
+                // PlayerSensors.Add(FactorySensors.CreateInstans(choice));
                 ChecksIfSensorExists();
                 NumAttempts = SumAllSensorIsExists();
                 Console.ForegroundColor = ConsoleColor.Green;
                 System.Console.WriteLine($"You were right - {NumAttempts}/{NumOfSensors}");
                 Console.ForegroundColor = ConsoleColor.White;
                 IranAgent.Attack();
-                System.Console.WriteLine(SumAllSensorIsExists()+ "  total");
+                System.Console.WriteLine(SumAllSensorIsExists() + "  total");
                 if (SumAllSensorIsExists() == NumOfSensors)
                 {
                     PrintWin();

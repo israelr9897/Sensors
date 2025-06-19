@@ -12,17 +12,24 @@ namespace Sensors.models
             {
                 foreach (var sensor in Game.PlayerSensors)
                 {
-                    if ((sensor.Type == this.Type) && (!sensor.IsActive))
+                    if (sensor.Key == this.Type.ToLower())
                     {
-                        sensor.IsActive = true;
-                        this.IsActive = true;
-                        Counter++;
-                        if (Counter == 3)
+                        for (int i = 0; i < sensor.Value.Count; i++)
                         {
-                            Counter = 0;
-                            TurnsOffOneSensor();
+                            if (!sensor.Value[i])
+                            {
+                                sensor.Value[i] = true;
+                                this.IsActive = true;
+                                this.IsActive = true;
+                                Counter++;
+                                if (Counter == 3)
+                                {
+                                    Counter = 0;
+                                    TurnsOffOneSensor();
+                                }
+                                return true;
+                            }
                         }
-                        return true;
                     }
                 }
             }   

@@ -11,7 +11,7 @@ namespace Sensors.models
                 int Len = OpetionsSensors.Length;
                 Random random = new Random();
                 string type = OpetionsSensors[random.Next(Len)];
-                Sensors.Add(CreateInstans(type));
+                Sensors.Add(CreateInstans("audio"));
             }
             foreach (var item in Sensors)
             {
