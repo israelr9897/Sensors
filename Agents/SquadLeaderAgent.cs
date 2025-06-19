@@ -6,7 +6,7 @@ namespace Sensors.models
 
         internal override void Attack()
         {
-            if (Game.CounterAttack == 5)
+            if (Game.CounterAttack % 5 == 0)
             {
                 foreach (var sensor in GetSensitiveSensors())
                 {
@@ -16,7 +16,6 @@ namespace Sensors.models
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         System.Console.WriteLine("\n⚠️⚠️ An attack is being carried out against ⚠️⚠️\n");
                         Console.ForegroundColor = ConsoleColor.White;
-                        Game.CounterAttack = 0;
                         break;
                     }
                 }

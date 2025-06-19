@@ -22,7 +22,9 @@ namespace Sensors.models
             }
             catch (MySqlException ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 System.Console.WriteLine($"Eror connecting to MySql: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.White;
             }
         }
 

@@ -30,15 +30,11 @@ namespace Sensors.models
         {
             Console.ForegroundColor = ConsoleColor.Blue;
             System.Console.WriteLine($"\nThe level of the Iranian agent playing against you is -- {Game.IranAgent.GetRankForAgent()} --\n");
-            foreach (var sensor in Game.IranAgent.GetSensitiveSensors())
-            {
-                if (!sensor.IsActive)
-                {
-                    System.Console.WriteLine($"And a sensor that the agent is sensitive to is -- {sensor.Type} --\n");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-                }
-            }
+            Random random = new Random();
+            int len = Game.IranAgent.GetSensitiveSensors().Count;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            System.Console.WriteLine($"A sensor that the Iranian agent is weak to --- {Game.IranAgent.GetSensitiveSensors()[random.Next(len)].Type} ---");
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }

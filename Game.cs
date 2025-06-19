@@ -7,11 +7,11 @@ namespace Sensors.models
         private static Game _instansce;
         private static int NumOfSensors;
         private static int NumAttempts = 0;
-        private int CounterToStepes = 0;
+        internal static int CounterToStepes = 0;
         internal static int CounterAttack = 0;
         internal static Agent IranAgent;
         internal static Player player;
-        private int Level = 1;
+        // private int Level = 1;
 
         // internal static List<Sensor> PlayerSensors = new List<Sensor>();
         internal static Dictionary<string, List<bool>> PlayerSensors = new Dictionary<string, List<bool>>();
@@ -24,9 +24,8 @@ namespace Sensors.models
             conn.connect();
             new DalPlayer(conn);
             new DalAgents(conn);
-            // CheckAndInputNewPlayer();
-            StartGame();     
             GameManager();
+
         }
         public static Game GetInstance()
         {
@@ -44,18 +43,19 @@ namespace Sensors.models
             {
                 System.Console.WriteLine("What your  - name - ? ");
                 string name = Console.ReadLine();
-                DalPlayer.AddPlayer(name, Functions.CreatCodePlayer(name));
+                codePlayer = Functions.CreatCodePlayer(name);
+                DalPlayer.AddPlayer(name, codePlayer);
             }
             player = DalPlayer.FindPlayerByCP(codePlayer);
-            Level = player.Level;
         }
         private void StartGame()
         {
             CreateIranAgent();
+            DalAgents.UpdateAgents(IranAgent);
             ReasetFilds();
             System.Console.WriteLine("\n-------- Welcome --------\n");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            System.Console.WriteLine($"-------- Level {Level} --------\n");
+            System.Console.WriteLine($"-------- Level {player.Level} --------\n");
             Console.ForegroundColor = ConsoleColor.White;
             System.Console.WriteLine($"Name: {IranAgent.Name}");
             System.Console.WriteLine("Waiting for you in the interrogation room.\n");
@@ -74,6 +74,8 @@ namespace Sensors.models
         }
         private void GameManager()
         {
+            CheckAndInputNewPlayer();
+            StartGame();     
             while (true)
             {
                 CounterAttack++;
@@ -87,13 +89,15 @@ namespace Sensors.models
                 System.Console.WriteLine($"You were right - {NumAttempts}/{NumOfSensors}");
                 Console.ForegroundColor = ConsoleColor.White;
                 IranAgent.Attack();
-                System.Console.WriteLine(SumAllSensorIsExists() + "  total");
                 if (SumAllSensorIsExists() == NumOfSensors)
                 {
                     PrintWin();
-                    Level++;
-                    if (Level == 5)
+                    DalPlayer.UpdatDataGameToPlayer(player, IranAgent.ID, CounterAttack);
+                    player.Level++;
+                    if (player.Level == 5)
                     {
+                        player.Level = 4;
+                        DalPlayer.UpdatePlayer(player);
                         break;
                     }
                     StartGame();
@@ -137,7 +141,7 @@ namespace Sensors.models
 
         private void CreateIranAgent()
         {
-            switch (Level)
+            switch (player.Level)
             {
                 case 1:
                     IranAgent = FactoryAgents.FactoryJuniorAgent("Junior");

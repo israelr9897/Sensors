@@ -29,18 +29,11 @@ namespace Sensors.models
         }
         private void OneSensorDetects()
         {
-            foreach (var sensor in Game.PlayerSensors)
-            {
-                for (int i = 0; i < sensor.Value.Count; i++)
-                {
-                    if (!sensor.Value[i])
-                    {
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        System.Console.WriteLine($"A sensor that the Iranian agent is weak to --- {sensor.Key} ---");
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
-                }
-            }
+            Random random = new Random();
+            int len = Game.IranAgent.GetSensitiveSensors().Count;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            System.Console.WriteLine($"A sensor that the Iranian agent is weak to --- {Game.IranAgent.GetSensitiveSensors()[random.Next(len)].Type} ---");
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }

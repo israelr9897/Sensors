@@ -18,7 +18,7 @@ namespace Sensors.models
                                 sensor.Value[i] = true;
                                 this.IsActive = true;
                                 this.IsActive = true;
-                                RevealsLevel();
+                                RevealsRank();
                                 return true;
                             }
                         }
@@ -27,7 +27,7 @@ namespace Sensors.models
             }
             return false;
         }
-        private void RevealsLevel()
+        private void RevealsRank()
         {
             Console.ForegroundColor = ConsoleColor.Blue;
             System.Console.WriteLine($"\nThe level of the Iranian agent playing against you is -- {Game.IranAgent.GetRankForAgent()} --\n");

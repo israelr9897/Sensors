@@ -21,7 +21,9 @@ namespace Sensors.models
             }
             catch (MySqlException ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 System.Console.WriteLine($"Error: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.White;
                 throw ex;
             }
             finally
@@ -29,36 +31,6 @@ namespace Sensors.models
                 _MySql.Disconnect();
             }
             return false;
-        }
-
-        private static List<Sensor> ReturnSensorsList(string strSensors)
-        {
-            List<Sensor> sensorsList = new List<Sensor>();
-            foreach (var type in strSensors.Split(","))
-            {
-                sensorsList.Add(FactorySensors.CreateInstans(type));
-            }
-            return sensorsList;
-        }
-        private static string ReturnStringOfSensors(List<Sensor> senList)
-        {
-            string strSensors = "";
-            foreach (var sensor in senList)
-            {
-                strSensors += sensor.Type;
-                strSensors += " , ";
-            }
-            return strSensors;
-        }
-        internal static Agent ReturnObjAgent(MySqlDataReader reader)
-        {
-            Agent agent = new Agent(
-               reader.GetInt32("id"),
-               reader.GetString("name"),
-               reader.GetString("rank"),
-               ReturnSensorsList(reader.GetString("sensitive_sensors"))
-           );
-            return agent;
         }
         static public string ReturnRandomAgent()
         {
@@ -72,7 +44,7 @@ namespace Sensors.models
                 reader.Read();
                 int num = reader.GetInt32("c");
                 reader.Close();
-                var cmd2 = new MySqlCommand($"SELECT * FROM agents WHERE id = {random.Next(1, num)}", conn);
+                var cmd2 = new MySqlCommand($"SELECT * FROM agents WHERE id = {random.Next(1, num+1)}", conn);
                 reader = cmd2.ExecuteReader();
                 reader.Read();
                 idAndName = reader.GetInt32("id").ToString() + ",";
@@ -81,7 +53,9 @@ namespace Sensors.models
             }
             catch (MySqlException ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 System.Console.WriteLine($"Error: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.White;
                 throw ex;
             }
             finally
@@ -98,11 +72,14 @@ namespace Sensors.models
                 var cmd = new MySqlCommand($"SELECT * FROM agents WHERE id = '{id}'", conn);
                 var reader = cmd.ExecuteReader();
                 reader.Read();
-                return ReturnObjAgent(reader);
+                return Functions.ReturnObjAgent(reader);
             }
             catch (MySqlException ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 System.Console.WriteLine($"Error: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.White;
+                throw ex;
             }
             finally
             {
@@ -115,15 +92,17 @@ namespace Sensors.models
             try
             {
                 MySqlConnection conn = _MySql.GetConnect();
-                var cmd = new MySqlCommand($"INSERT INTO agents(name,rank,sensitive_sensors)VALUES(@name,@rank,@sensitive_sensors)", conn);
-                cmd.Parameters.AddWithValue(@"name", agent.Name);
-                cmd.Parameters.AddWithValue(@"sensitive_sensors", ReturnStringOfSensors(agent.GetSensitiveSensors()));
+                var cmd = new MySqlCommand($"UPDATE agents SET rank = @rank, sensitive_sensors = @sensitive_sensors WHERE id = {agent.ID};", conn);
                 cmd.Parameters.AddWithValue(@"rank", agent.GetRankForAgent());
+                cmd.Parameters.AddWithValue(@"sensitive_sensors", Functions.ReturnStringOfSensors(agent.GetSensitiveSensors()));
                 cmd.ExecuteNonQuery();
             }
             catch (MySqlException ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 System.Console.WriteLine($"Error: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.White;
+                throw ex;
             }
             finally
             {

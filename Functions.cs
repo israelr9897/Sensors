@@ -8,12 +8,18 @@ namespace Sensors.models
         {
             Player player = new Player(
                reader.GetString("name"),
-               reader.GetString("Code_player"),
-               reader.GetInt32("last_level")
+               reader.GetString("code_player"),
+               reader.GetInt32("last_level"),
+               reader.GetInt32("ID"),
+               reader.GetInt32("num_game")
            );
             return player;
         }
-        static public string CreatCodePlayer(string fullName)
+        internal static string ReturnTimeNow()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+        }
+        internal static string CreatCodePlayer(string fullName)
         {
             string FN = fullName.Split(" ")[0];
             string LN = fullName.Split(" ")[1];
@@ -31,6 +37,35 @@ namespace Sensors.models
                 }
             }
             return codePlayer;
+        }
+        internal static Agent ReturnObjAgent(MySqlDataReader reader)
+        {
+            Agent agent = new Agent(
+               reader.GetInt32("id"),
+               reader.GetString("name"),
+               reader.GetString("rank"),
+               ReturnSensorsList(reader.GetString("sensitive_sensors"))
+           );
+            return agent;
+        }
+        internal static string ReturnStringOfSensors(List<Sensor> senList)
+        {
+            string strSensors = "";
+            foreach (var sensor in senList)
+            {
+                strSensors += sensor.Type;
+                strSensors += " , ";
+            }
+            return strSensors;
+        }
+        private static List<Sensor> ReturnSensorsList(string strSensors)
+        {
+            List<Sensor> sensorsList = new List<Sensor>();
+            foreach (var type in strSensors.Split(","))
+            {
+                sensorsList.Add(FactorySensors.CreateInstans(type));
+            }
+            return sensorsList;
         }
     }
 }
