@@ -2,20 +2,17 @@ using System.Numerics;
 
 namespace Sensors.models
 {
-    internal class Game
+    internal class Game : ManagerGame
     {
         private static Game _instansce;
-        private static int NumOfSensors;
-        private static int NumAttempts = 0;
-        internal static int CounterToStepes = 0;
-        internal static int CounterAttack = 0;
-        internal static Agent IranAgent;
-        internal static Player player;
-        // private int Level = 1;
-
-        // internal static List<Sensor> PlayerSensors = new List<Sensor>();
-        internal static Dictionary<string, List<bool>> PlayerSensors = new Dictionary<string, List<bool>>();
-        internal static List<Agent> AgenetsToGame = new List<Agent>();
+        // private static int NumOfSensors;
+        // internal static int NumAttempts = 0;
+        // internal static int CounterToStepes = 0;
+        // internal static int CounterAttack = 0;
+        // internal static Agent IranAgent;
+        // internal static Player player;
+        // internal static Dictionary<string, List<bool>> PlayerSensors = new Dictionary<string, List<bool>>();
+        // internal static List<Agent> AgenetsToGame = new List<Agent>();
 
 
         private Game()
@@ -24,8 +21,7 @@ namespace Sensors.models
             conn.connect();
             new DalPlayer(conn);
             new DalAgents(conn);
-            GameManager();
-
+            FlowGame();
         }
         public static Game GetInstance()
         {
@@ -35,46 +31,16 @@ namespace Sensors.models
             }
             return _instansce;
         }
-        private void CheckAndInputNewPlayer()
-        {
-            System.Console.WriteLine("What your  - code player - ? ");
-            string codePlayer = Console.ReadLine();
-            if (!DalPlayer.ChecksIfPlayerExistsByCodePlayer(codePlayer))
-            {
-                System.Console.WriteLine("What your  - name - ? ");
-                string name = Console.ReadLine();
-                codePlayer = Functions.CreatCodePlayer(name);
-                DalPlayer.AddPlayer(name, codePlayer);
-            }
-            player = DalPlayer.FindPlayerByCP(codePlayer);
-        }
         private void StartGame()
         {
             CreateIranAgent();
-            DalAgents.UpdateAgents(IranAgent);
             ReasetFilds();
-            System.Console.WriteLine("\n-------- Welcome --------\n");
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            System.Console.WriteLine($"-------- Level {player.Level} --------\n");
-            Console.ForegroundColor = ConsoleColor.White;
-            System.Console.WriteLine($"Name: {IranAgent.Name}");
-            System.Console.WriteLine("Waiting for you in the interrogation room.\n");
+            Prints.PRWelcome();
             CounterToStepes = 0;
         }
-        private void AddDictOfPlayer(string key)
+        private void FlowGame()
         {
-            if (!PlayerSensors.ContainsKey(key))
-            {
-                PlayerSensors[key] = new List<bool> { false };
-            }
-            else
-            {
-                PlayerSensors[key].Add(false);
-            }
-        }
-        private void GameManager()
-        {
-            CheckAndInputNewPlayer();
+            EnterUserToGame();
             StartGame();     
             while (true)
             {
@@ -82,22 +48,14 @@ namespace Sensors.models
                 CounterToStepes++;
                 string choice = InputAndCheckChoice();
                 AddDictOfPlayer(choice);
-                // PlayerSensors.Add(FactorySensors.CreateInstans(choice));
                 ChecksIfSensorExists();
                 NumAttempts = SumAllSensorIsExists();
-                Console.ForegroundColor = ConsoleColor.Green;
-                System.Console.WriteLine($"You were right - {NumAttempts}/{NumOfSensors}");
-                Console.ForegroundColor = ConsoleColor.White;
+                Prints.PRAnswer();
                 IranAgent.Attack();
                 if (SumAllSensorIsExists() == NumOfSensors)
                 {
-                    PrintWin();
-                    DalPlayer.UpdatDataGameToPlayer(player, IranAgent.ID, CounterAttack);
-                    player.Level++;
-                    if (player.Level == 5)
+                    if (IsWin())
                     {
-                        player.Level = 4;
-                        DalPlayer.UpdatePlayer(player);
                         break;
                     }
                     StartGame();
@@ -109,47 +67,17 @@ namespace Sensors.models
                 }
             }
         }
-        private void ReasetFilds()
-        {
-            NumAttempts = 0;
-            Pulse.Counter = 0;
-            CounterAttack = 0;
-            PlayerSensors.Clear();
-            foreach (var sensor in IranAgent.GetSensitiveSensors())
-            {
-                sensor.IsActive = false;
-            }
-        }
-
-
-        private static void PrintWin()
-        {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            System.Console.WriteLine("\nYou won!!! You managed to find all the correct sensors\n");
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-        private void IsTenTries()
-        {
-            if (CounterToStepes % 10 == 0)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
-                System.Console.WriteLine("\nIt's been 10 tries !!! you'll have to start all over again.\n");
-                Console.ForegroundColor = ConsoleColor.White;
-                ReasetFilds();
-            }
-        }
-
         private void CreateIranAgent()
         {
-            switch (player.Level)
+            switch (Game.player.Level)
             {
                 case 1:
                     IranAgent = FactoryAgents.FactoryJuniorAgent("Junior");
-                    NumOfSensors = IranAgent.GetSensitiveSensors().Count;
+                    NumOfSensors = Game.IranAgent.GetSensitiveSensors().Count;
                     break;
                 case 2:
                     IranAgent = FactoryAgents.FactoryJuniorAgent("SquadLeader");
-                    NumOfSensors = IranAgent.GetSensitiveSensors().Count;
+                    NumOfSensors = Game.IranAgent.GetSensitiveSensors().Count;
                     break;
                 case 3:
                     IranAgent = FactoryAgents.FactoryJuniorAgent("SeniorCommander");
@@ -160,48 +88,10 @@ namespace Sensors.models
                     NumOfSensors = IranAgent.GetSensitiveSensors().Count;
                     break;
             }
-            // DalAgents.UpdateAgents(IranAgent);
+            DalAgents.UpdateAgents(IranAgent);
             AgenetsToGame.Add(IranAgent);
         }
-
-        private int SumAllSensorIsExists()
-        {
-            int total = 0;
-            foreach (var sensor in IranAgent.GetSensitiveSensors())
-            {
-                if (sensor.IsActive)
-                {
-                    total++;
-                }
-            }
-            return total;
-        }
-        private void ChecksIfSensorExists()
-        {
-            foreach (var sensor in IranAgent.GetSensitiveSensors())
-            {
-                if (sensor.Active())
-                {
-                    break;
-                }
-            }
-        }
         
-        private string InputAndCheckChoice()
-        {
-            System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic / Signal / Light");
-            string choice = Console.ReadLine().ToLower();
-            bool check = FactorySensors.OpetionsSensors.Contains(choice);
-            while (!check)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                System.Console.WriteLine("--- There is no such sensor, please insert one from the existing sensors. ---\n");
-                Console.ForegroundColor = ConsoleColor.White;
-                System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic / Signal / Light");
-                choice = Console.ReadLine().ToLower();
-                check = FactorySensors.OpetionsSensors.Contains(choice);
-            }
-            return choice;
-        }
+        
     }
 }

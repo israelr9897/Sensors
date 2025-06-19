@@ -7,7 +7,7 @@ namespace Sensors.models
         {
             if (!IsActive)
             {
-                foreach (var sensor in Game.PlayerSensors)
+                foreach (var sensor in ManagerGame.PlayerSensors)
                 {
                     if (sensor.Key == this.Type.ToLower())
                     {
@@ -30,9 +30,9 @@ namespace Sensors.models
         private void OneSensorDetects()
         {
             Random random = new Random();
-            int len = Game.IranAgent.GetSensitiveSensors().Count;
+            int len = ManagerGame.IranAgent.GetSensitiveSensors().Count;
             Console.ForegroundColor = ConsoleColor.Blue;
-            System.Console.WriteLine($"A sensor that the Iranian agent is weak to --- {Game.IranAgent.GetSensitiveSensors()[random.Next(len)].Type} ---");
+            System.Console.WriteLine($"A sensor that the Iranian agent is weak to --- {ManagerGame.IranAgent.GetSensitiveSensors()[random.Next(len)].Type} ---");
             Console.ForegroundColor = ConsoleColor.White;
         }
     }
