@@ -86,7 +86,7 @@ namespace Sensors.models
                 MySqlConnection conn = _MySql.GetConnect();
                 var cmd = new MySqlCommand($"SELECT * FROM players WHERE code_player = '{codePlayer}'", conn);
                 MySqlDataReader reader = cmd.ExecuteReader();
-                System.Console.WriteLine(reader.Read());
+                reader.Read();
                 return Functions.ReturnObjPlayer(reader);
             }
             catch (MySqlException ex)

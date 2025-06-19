@@ -7,7 +7,7 @@ namespace Sensors.models
         {
             if (!IsActive)
             {
-                foreach (var sensor in Game.PlayerSensors)
+                foreach (var sensor in ManagerGame.PlayerSensors)
                 {
                     if (sensor.Key == this.Type.ToLower())
                     {
@@ -28,7 +28,7 @@ namespace Sensors.models
         }
         private void CounterattackCancellation()
         {
-            Game.CounterAttack -= 2;
+            ManagerGame.CounterAttack -= 2;
             Console.ForegroundColor = ConsoleColor.Blue;
             System.Console.WriteLine("\nTwo counterattacks were foiled.\n");
             Console.ForegroundColor = ConsoleColor.White;

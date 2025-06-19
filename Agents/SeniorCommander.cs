@@ -6,7 +6,7 @@ namespace Sensors.models
 
         internal override void Attack()
         {
-            if (Game.CounterAttack % 5 == 0)
+            if (ManagerGame.CounterAttack % 5 == 0)
             {
                 int count = 0;
                 foreach (var sensor in GetSensitiveSensors())

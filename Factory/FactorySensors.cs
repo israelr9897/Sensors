@@ -15,7 +15,9 @@ namespace Sensors.models
             }
             foreach (var item in Sensors)
             {
+                Console.ForegroundColor = ConsoleColor.Black;
                 System.Console.WriteLine(item);
+                Console.ForegroundColor = ConsoleColor.White;
             }
             return Sensors;
 

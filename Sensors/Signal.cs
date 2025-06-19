@@ -7,7 +7,7 @@ namespace Sensors.models
         {
             if (!IsActive)
             {
-                foreach (var sensor in Game.PlayerSensors)
+                foreach (var sensor in ManagerGame.PlayerSensors)
                 {
                     if (sensor.Key == this.Type.ToLower())
                     {
