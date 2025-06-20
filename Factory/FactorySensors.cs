@@ -43,6 +43,7 @@ namespace Sensors.models
 
                 case "signal":
                     return new Signal();
+                    
                 case "light":
                     return new Light();
             }

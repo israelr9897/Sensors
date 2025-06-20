@@ -12,7 +12,7 @@ namespace Sensors.models
         internal static List<Agent> AgenetsToGame = new List<Agent>();
         protected void EnterUserToGame()
         {
-            string codePlayer = Prints.PREEnter();;
+            string codePlayer = Prints.PREEnter(); ;
             while (!DalPlayer.ChecksIfPlayerExistsByCodePlayer(codePlayer))
             {
                 Prints.PRPlayerCodeError();
@@ -78,13 +78,37 @@ namespace Sensors.models
         {
             Prints.PRWinLevel();
             DalPlayer.UpdatDataGameToPlayer(player, IranAgent.ID, CounterAttack);
-            player.Level++;
-            if (player.Level == 5)
+            return MovingToTheNextLevel();
+        }
+        protected bool MovingToTheNextLevel()
+        {
+            Prints.PRMovingToTheNextLevel();
+            string choice = Console.ReadLine();
+            switch (choice)
             {
-                player.Level = 4;
-                Prints.PrintWin();
-                DalPlayer.UpdatePlayer(player);
-                return true;
+                case "1":
+                    player.Level++;
+                    if (player.Level == 5)
+                    {
+                        player.Level = 4;
+                        Prints.PrintWin();
+                        DalPlayer.UpdatePlayer(player);
+                        return true;
+                    }
+                    break;
+
+                case "2":
+                    break;
+
+                case "0":
+                    Environment.Exit(0);
+                    break;
+
+                default:
+                    System.Console.WriteLine("Invalid selection");
+                    MovingToTheNextLevel();
+                    break;
+
             }
             return false;
         }
@@ -95,6 +119,10 @@ namespace Sensors.models
             bool check = FactorySensors.OpetionsSensors.Contains(choice);
             while (!check)
             {
+                if (choice == "0")
+                {
+                    Environment.Exit(0);
+                }
                 Prints.PRnoSuchSensor();
                 Prints.PRchoiceSensor();
                 choice = Console.ReadLine().ToLower();
@@ -102,7 +130,23 @@ namespace Sensors.models
             }
             return choice;
         }
-        protected void ReasetFilds()
+        protected void EndOfPhaseCheck()
+        {
+            if (SumAllSensorIsExists() == NumOfSensors)
+            {
+                if (IsWin())
+                {
+                    Environment.Exit(0);
+                }
+                Game.StartGame();
+            }
+            else
+            {
+                System.Console.WriteLine("\nYou were unable to pair the correct sensors, please try again.");
+                IsTenTries();
+            }
+        }
+        protected static void ReasetFilds()
         {
             NumAttempts = 0;
             Pulse.Counter = 0;
@@ -112,6 +156,30 @@ namespace Sensors.models
             {
                 sensor.IsActive = false;
             }
+        }
+        protected static void CreateIranAgent()
+        {
+            switch (Game.player.Level)
+            {
+                case 1:
+                    IranAgent = FactoryAgents.FactoryJuniorAgent("Junior");
+                    NumOfSensors = Game.IranAgent.GetSensitiveSensors().Count;
+                    break;
+                case 2:
+                    IranAgent = FactoryAgents.FactoryJuniorAgent("SquadLeader");
+                    NumOfSensors = Game.IranAgent.GetSensitiveSensors().Count;
+                    break;
+                case 3:
+                    IranAgent = FactoryAgents.FactoryJuniorAgent("SeniorCommander");
+                    NumOfSensors = IranAgent.GetSensitiveSensors().Count;
+                    break;
+                case 4:
+                    IranAgent = FactoryAgents.FactoryJuniorAgent("OrganizationLeader");
+                    NumOfSensors = IranAgent.GetSensitiveSensors().Count;
+                    break;
+            }
+            DalAgents.UpdateAgents(IranAgent);
+            AgenetsToGame.Add(IranAgent);
         }
     }
 }
