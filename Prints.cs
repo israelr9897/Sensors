@@ -4,12 +4,16 @@ namespace Sensors.models
     {
         internal static string PREEnter()
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            System.Console.WriteLine("\n----------  Welcome  ----------\n");
+            Console.ForegroundColor = ConsoleColor.White;
             System.Console.WriteLine("Enter your player code - ");
             System.Console.WriteLine("To register click 1");
             string choice = Console.ReadLine();
             if (choice == "1")
             {
-                return ManagerGame.Registration();;
+                PRInputFullName();
+                return ManagerGame.Registration(); ;
             }
             return choice;
         }
@@ -29,16 +33,33 @@ namespace Sensors.models
         }
         internal static void PRRegistrationMessage(string name, string CP)
         {
-            System.Console.WriteLine("-- √ Registration Successful √ --");
-            System.Console.WriteLine($"-- Name: {name} --");
-            System.Console.WriteLine($"-- Player Code: {CP} --");
+            Console.ForegroundColor = ConsoleColor.Green;
+            System.Console.WriteLine("\n √ Registration Successful √ ");
+            System.Console.WriteLine($"\nName: {name} ");
+            System.Console.WriteLine($"Player Code: {CP} \n");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        internal static void PRPlayerDetails()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            System.Console.WriteLine($"\nHi {ManagerGame.player.Name}");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+        internal static void PRMovingToTheNextLevel()
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            System.Console.WriteLine("Enter your choice -  ");
+            System.Console.WriteLine("1. To move to the next step ");
+            System.Console.WriteLine("2. To stay at the current step");
+            System.Console.WriteLine("0. Exit");
+            Console.ForegroundColor = ConsoleColor.White;
         }
         internal static void PRWinLevel()
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
             System.Console.WriteLine($"\nCongratulations!! You have completed the step - {ManagerGame.player.Level}\n");
             Console.ForegroundColor = ConsoleColor.White;
-            
         }
         internal static void PrintWin()
         {
@@ -48,7 +69,9 @@ namespace Sensors.models
         }
         internal static void PRchoiceSensor()
         {
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
             System.Console.WriteLine("choice a Sensor Audio / Thermal / Pulse / Motion / Magnetic / Signal / Light");
+            Console.ForegroundColor = ConsoleColor.White;
         }
         internal static void PRnoSuchSensor()
         {
@@ -64,9 +87,10 @@ namespace Sensors.models
         }
         internal static void PRWelcome()
         {
-            System.Console.WriteLine("\n-------- Welcome --------\n");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            System.Console.WriteLine($"-------- Level {ManagerGame.player.Level} --------\n");
+            System.Console.WriteLine($"\n-------- Level {ManagerGame.player.Level} --------\n");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            System.Console.WriteLine("At any stage you can press 0 to exit.\n");
             Console.ForegroundColor = ConsoleColor.White;
             System.Console.WriteLine($"Name: {ManagerGame.IranAgent.Name}");
             System.Console.WriteLine("Waiting for you in the interrogation room.\n");
@@ -83,8 +107,5 @@ namespace Sensors.models
             Console.WriteLine($"\nYou were right - {ManagerGame.NumAttempts}/{ManagerGame.NumOfSensors}");
             Console.ForegroundColor = ConsoleColor.White;
         }
-
-
-        
     }
 }

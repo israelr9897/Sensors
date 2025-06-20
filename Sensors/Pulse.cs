@@ -20,7 +20,6 @@ namespace Sensors.models
                             {
                                 sensor.Value[i] = true;
                                 this.IsActive = true;
-                                this.IsActive = true;
                                 Counter++;
                                 if (Counter == 3)
                                 {
